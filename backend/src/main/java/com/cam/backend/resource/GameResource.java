@@ -4,22 +4,25 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cam.backend.entities.Game;
-import com.cam.backend.repository.GameRepository;
+import com.cam.backend.dto.GameDTO;
+import com.cam.backend.services.GameService;
 
 @RestController
 @RequestMapping(value = "/games")
 public class GameResource {
 	
 	@Autowired
-	private GameRepository gameRepository;
+	private GameService gameService;
 	
 	@GetMapping
-	public ResponseEntity<List<Game>> listar(){
-		return ResponseEntity.ok().body(gameRepository.findAll());
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<GameDTO>> findAll(){
+		List<GameDTO> list = gameService.findAll();
+		return ResponseEntity.ok().body(list);
 	}
 }

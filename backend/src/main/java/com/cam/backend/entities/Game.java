@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.cam.backend.entities.enums.Platform;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_game")
@@ -27,11 +26,9 @@ public class Game implements Serializable{
 	private Long id;
 	private String title;
 	private Platform platform;
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "genre_id")
 	private Genre genre;
-	@JsonIgnore
 	@OneToMany(mappedBy = "game")
 	private List<Record> records = new ArrayList<Record>();
 	

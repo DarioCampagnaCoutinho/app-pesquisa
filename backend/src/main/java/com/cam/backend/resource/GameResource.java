@@ -20,7 +20,6 @@ public class GameResource {
 	private GameService gameService;
 	
 	@GetMapping
-	@Transactional(readOnly = true)
 	public ResponseEntity<List<GameDTO>> findAll(){
 		List<GameDTO> list = gameService.findAll();
 		return ResponseEntity.ok().body(list);

@@ -1,7 +1,11 @@
 import React from 'react';
 
-const Hello = () => (
-    <h1>Dario Campagna!</h1>
+type Props = {
+    message: String;
+}
+
+const Hello = ({message}: Props) => (
+<h1>Dario {message}!</h1>
 );
 
 export default Hello;

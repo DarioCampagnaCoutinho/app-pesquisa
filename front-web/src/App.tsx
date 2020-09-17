@@ -4,7 +4,7 @@ import Hello from './Hello';
 
 function App() {
   return (
-    <Hello />
+    <Hello message=' Campagna'/>
   );
 }
 

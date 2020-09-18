@@ -1,25 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Filters from '../../components/Filters';
 import './styles.css';
 import Chart from 'react-apexcharts';
 import { barOptions, pieOptions } from './chart-options';
+import axios from 'axios';
+import { buildBarSeries, getPlatformChartData, getGenderChartData } from './helpers';
 
-const ChartData = [
-    {
-        x: "Dario",
-        y: 10
-    },
-    {
-        x: "Fario",
-        y: 13
-    },
-    {
-        x: "Mario",
-        y: 12
-    }
-]
+
+type PieChartData = {
+    labels: string[];
+    series: number[];
+};
+
+type BarChartData = {
+    x: string;
+    y: number;
+};
+
+const initialData = {
+    labels: [],
+    series: []
+};
+
+const BASE_URL = "http://localhost:8080";
 
 const Charts = () => {
+
+    const [barChartData, setBarChartData] = useState<BarChartData[]>([]);
+    const [platformData, setPlatformData] = useState<PieChartData>(initialData);
+    const [genderData, setGenderData] = useState<PieChartData>(initialData);
+
+    useEffect(() => {
+        async function getData(){
+            const recordsResponse = await axios.get(`${BASE_URL}/records`);
+            const gamesResponse = await axios.get(`${BASE_URL}/games`);
+
+            const barData = buildBarSeries(gamesResponse.data, recordsResponse.data.content);
+            setBarChartData(barData);
+
+            const platformChartData = getPlatformChartData(recordsResponse.data.content);
+            setPlatformData(platformChartData);
+
+            const genderChartData = getGenderChartData(recordsResponse.data.content);
+            setGenderData(genderChartData);
+        };
+        getData();
+    }, []);
 
     return (
         <div className="page-container">
@@ -34,8 +60,8 @@ const Charts = () => {
                             options={barOptions}
                             type="bar"
                             width="900"
-                            height="150"
-                            series={[{data: ChartData}]}
+                            height="650"
+                            series={[{data: barChartData}]}
                         />
                     </div>
                 </div>
@@ -43,18 +69,18 @@ const Charts = () => {
                     <div className="platform-chart">
                         <h2 className="chart-title">Plataformas</h2>
                         <Chart 
-                            options={{...pieOptions, labels: ['Dario', 'Nelio']}}
+                            options={{...pieOptions, labels: platformData?.labels }}
                             type="donut"
-                            series={[30, 70]}
+                            series={platformData?.series}
                             width="190"
                         />
                     </div>
                     <div className="gender-chart">
                         <h2 className="chart-title">Gênero</h2>
                         <Chart 
-                            options={{...pieOptions, labels: ['Dario', 'Nelio']}}
+                            options={{...pieOptions, labels: genderData?.labels }}
                             type="donut"
-                            series={[30, 70]}
+                            series={genderData?.series}
                             width="190"
                         />
                     </div>
